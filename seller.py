@@ -7,35 +7,37 @@ from olist.order import Order
 
 class Seller:
     def __init__(self):
-        # Import data only once
+        # The data is imported only once
         olist = Olist()
         self.data = olist.get_data()
         self.order = Order()
 
     def get_seller_features(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'seller_id', 'seller_city', 'seller_state'
         """
-        sellers = self.data['sellers'].copy(
-        )  # Make a copy before using inplace=True so as to avoid modifying self.data
+        sellers = self.data['sellers'].copy()
+        # A copy is made before using inplace=True to avoid modifying
+        #self.data
         sellers.drop('seller_zip_code_prefix', axis=1, inplace=True)
         sellers.drop_duplicates(
-            inplace=True)  # There can be multiple rows per seller
+            inplace=True)
+        # There can be multiple rows per seller
         return sellers
 
     def get_seller_delay_wait_time(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'seller_id', 'delay_to_carrier', 'wait_time'
         """
-        # Get data
+        # Data is extracted
         order_items = self.data['order_items'].copy()
         orders = self.data['orders'].query("order_status=='delivered'").copy()
 
         ship = order_items.merge(orders, on='order_id')
 
-        # Handle datetime
+        # Datetime is handled
         ship.loc[:, 'shipping_limit_date'] = pd.to_datetime(
             ship['shipping_limit_date'])
         ship.loc[:, 'order_delivered_carrier_date'] = pd.to_datetime(
@@ -45,7 +47,7 @@ class Seller:
         ship.loc[:, 'order_purchase_timestamp'] = pd.to_datetime(
             ship['order_purchase_timestamp'])
 
-        # Compute delay and wait_time
+        # Delay and wait_time are computed
         def delay_to_logistic_partner(d):
             days = np.mean(
                 (d.order_delivered_carrier_date - d.shipping_limit_date) /
@@ -77,15 +79,16 @@ class Seller:
 
     def get_active_dates(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'seller_id', 'date_first_sale', 'date_last_sale', 'months_on_olist'
         """
-        # First, get only orders that are approved
+        # Only orders that are approved are extracted
         orders_approved = self.data['orders'][[
             'order_id', 'order_approved_at'
         ]].dropna()
 
-        # Then, create a (orders <> sellers) join table because a seller can appear multiple times in the same order
+        # A (orders <> sellers) join table is created, because a seller can
+        # appear multiple times in the same order
         orders_sellers = orders_approved.merge(self.data['order_items'],
                                                on='order_id')[[
                                                    'order_id', 'seller_id',
@@ -94,7 +97,7 @@ class Seller:
         orders_sellers["order_approved_at"] = pd.to_datetime(
             orders_sellers["order_approved_at"])
 
-        # Compute dates
+        # Dates are computed
         orders_sellers["date_first_sale"] = orders_sellers["order_approved_at"]
         orders_sellers["date_last_sale"] = orders_sellers["order_approved_at"]
         df = orders_sellers.groupby('seller_id').agg({
@@ -108,7 +111,7 @@ class Seller:
 
     def get_quantity(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'seller_id', 'n_orders', 'quantity', 'quantity_per_order'
         """
         order_items = self.data['order_items']
@@ -128,7 +131,7 @@ class Seller:
 
     def get_sales(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'seller_id', 'sales'
         """
         return self.data['order_items'][['seller_id', 'price']]\
@@ -138,7 +141,7 @@ class Seller:
 
     def get_review_score(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'seller_id', 'share_of_five_stars', 'share_of_one_stars', 'review_score'
         """
 
@@ -178,7 +181,7 @@ class Seller:
 
     def get_training_data(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         ['seller_id', 'seller_city', 'seller_state', 'delay_to_carrier',
         'wait_time', 'date_first_sale', 'date_last_sale', 'months_on_olist', 'share_of_one_stars',
         'share_of_five_stars', 'review_score', 'n_orders', 'quantity',
@@ -199,7 +202,7 @@ class Seller:
                 self.get_sales(), on='seller_id'
             )
 
-        # Add seller economics (revenues, profits)
+        # Seller economics (revenues, profits) are computed
         olist_monthly_fee = 80
         olist_sales_cut = 0.1
 

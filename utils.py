@@ -5,8 +5,9 @@ import seaborn as sns
 
 def haversine_distance(lon1, lat1, lon2, lat2):
     """
-    Compute distance between two pairs of coordinates (lon1, lat1, lon2, lat2)
-    See - (https://en.wikipedia.org/wiki/Haversine_formula)
+    This function computes distance between two pairs of coordinates
+    (lon1, lat1, lon2, lat2)
+    Reference - (https://en.wikipedia.org/wiki/Haversine_formula)
     """
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
     dlon = lon2 - lon1
@@ -17,14 +18,14 @@ def haversine_distance(lon1, lat1, lon2, lat2):
 
 def return_significative_coef(model):
     """
-    Returns p_value, lower and upper bound coefficients
+    This function returns p_value, lower and upper bound coefficients
     from a statsmodels object.
     """
-    # Extract p_values
+    # p_values are extracted
     p_values = model.pvalues.reset_index()
     p_values.columns = ['variable', 'p_value']
 
-    # Extract coef_int
+    # coef_int are extracted
     coef = model.params.reset_index()
     coef.columns = ['variable', 'coef']
     return p_values.merge(coef,
@@ -35,7 +36,7 @@ def return_significative_coef(model):
 
 def plot_kde_plot(df, variable, dimension):
     """
-    Plot a side by side kdeplot for `variable`, split
+    This function plots a side by side kdeplot for `variable`, split
     by `dimension`.
     """
     g = sns.FacetGrid(df,

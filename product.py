@@ -7,21 +7,21 @@ from olist.order import Order
 
 class Product:
     def __init__(self):
-        # Import data only once
+        # Data is imported only once
         olist = Olist()
         self.data = olist.get_data()
         self.order = Order()
 
     def get_product_features(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
        'product_id', 'product_category_name', 'product_name_length',
        'product_description_length', 'product_photos_qty', 'product_weight_g',
        'product_length_cm', 'product_height_cm', 'product_width_cm'
         """
         products = self.data['products']
 
-        # (optional) convert name to English
+        # Name is converted from Portuguese to English
         en_category = self.data['product_category_name_translation']
         df = products.merge(en_category, on='product_category_name')
         df.drop(['product_category_name'], axis=1, inplace=True)
@@ -36,11 +36,12 @@ class Product:
 
     def get_price(self):
         """
-        Return a DataFrame with:
+        This function returns a DataFrame with:
         'product_id', 'price'
         """
         order_items = self.data['order_items']
-        # There are many different order_items per product_id, each with different prices. Take the mean of the various prices
+        # There are many different order_items per product_id, each with
+        # different prices. The mean of the various prices is taken
         return order_items[['product_id',
                             'price']].groupby('product_id').mean()
 
@@ -58,7 +59,7 @@ class Product:
 
     def get_review_score(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'product_id', 'share_of_five_stars', 'share_of_one_stars',
         'review_score'
         """
@@ -94,7 +95,7 @@ class Product:
 
     def get_quantity(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'product_id', 'n_orders', 'quantity'
         """
         order_items = self.data['order_items']
@@ -112,7 +113,7 @@ class Product:
 
     def get_sales(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         'product_id', 'sales'
         """
         return self.data['order_items'][['product_id', 'price']]\
@@ -122,7 +123,7 @@ class Product:
 
     def get_training_data(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         ['product_id', 'product_name_length', 'product_description_length',
        'product_photos_qty', 'product_weight_g', 'product_length_cm',
        'product_height_cm', 'product_width_cm', 'category', 'wait_time',
@@ -143,7 +144,7 @@ class Product:
                 self.get_sales(), on='product_id'
                )
 
-        # compute the economics (revenues, profits)
+        # The economics (revenues, profits) are computed
         olist_sales_cut = 0.1
         training_set['revenues'] = olist_sales_cut * training_set['sales']
         training_set['profits'] = training_set['revenues'] - training_set[
@@ -152,7 +153,8 @@ class Product:
 
     def get_product_cat(self, agg="mean"):
         '''
-        Returns a DataFrame with `category` as index, and aggregating various properties for each category in columns such as:
+        This function returns a DataFrame with `category` as index, and
+        aggregating various properties for each category in columns such as:
         - `quantity`: total number of products sold for this category.
         - `product_weight_g`: mean or median weight per category
         - ...

@@ -5,9 +5,9 @@ import pandas as pd
 class Olist:
     def get_data(self):
         """
-        This function returns a Python dict.
+        This function returns a Python dictionary.
         Its keys should be 'sellers', 'orders', 'order_items' etc...
-        Its values should be pandas.DataFrames loaded from csv files
+        Its values should be pandas DataFrames loaded from csv files
         """
         # csv_path is built as "absolute path" so that this method can be called from anywhere.
             # Path cannot be hardcoded as it only works on my machine ('Users/username/code...')

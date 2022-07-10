@@ -30,3 +30,7 @@ termcolor
 
 #data exploration
 pandas-profiling
+
+#data visualisation
+matplotlib
+seaborn

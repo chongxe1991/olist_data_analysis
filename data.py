@@ -3,6 +3,8 @@ import pandas as pd
 
 
 class Olist:
+
+
     def get_data(self):
         """
         This function returns a Python dictionary.
@@ -13,7 +15,6 @@ class Olist:
             # Path cannot be hardcoded as it only works on my machine ('Users/username/code...')
             # __file__ is used instead as an absolute path anchor independent of my usename
         # os.path library is used to construct path independent of Mac vs. Unix vs. Windows specificities
-
         root_path = os.path.dirname(os.path.abspath(__file__))
         csv_path = os.path.join(root_path, "data", "csv")
         file_names = []

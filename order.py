@@ -6,20 +6,21 @@ from olist.data import Olist
 
 class Order:
     '''
-    DataFrames containing all orders as index,
+    This function returns a DataFrames containing all orders as index,
     and various properties of these orders as columns
     '''
     def __init__(self):
-        # Assign an attribute ".data" to all new instances of Order
+        # An attribute ".data" is assigned to all new instances of Order
         self.data = Olist().get_data()
 
     def get_wait_time(self, is_delivered=True):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         [order_id, wait_time, expected_wait_time, delay_vs_expected, order_status]
         and filters out non-delivered orders unless specified
         """
-        # Hint: Within this instance method, you have access to the instance of the class Order in the variable self, as well as all its attributes
+        # Within this instance method, we have access to the instance of the
+        # class Order in the variable self, as well as all its attributes
         orders = self.data['orders'].copy()
 
         orders = orders[orders["order_status"] == "delivered"]
@@ -44,7 +45,7 @@ class Order:
 
     def get_review_score(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         order_id, dim_is_five_star, dim_is_one_star, review_score
         """
         reviews = self.data['order_reviews'].copy()
@@ -57,7 +58,7 @@ class Order:
 
     def get_number_products(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         order_id, number_of_products
         """
         order_items = self.data["order_items"].copy()
@@ -69,7 +70,7 @@ class Order:
 
     def get_number_sellers(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         order_id, number_of_sellers
         """
         order_items = self.data["order_items"].copy()
@@ -81,7 +82,7 @@ class Order:
 
     def get_price_and_freight(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         order_id, price, freight_value
         """
         order_items = self.data["order_items"].copy()
@@ -90,25 +91,26 @@ class Order:
         order_items = order_items[["order_id", "price", "freight_value"]]
         return order_items
 
-    # Optional
+
     def get_distance_seller_customer(self):
         """
-        Returns a DataFrame with:
+        This function returns a DataFrame with:
         order_id, distance_seller_customer
         """
-        # import data
+        # Data is imported
         data = self.data
         orders = data['orders']
         order_items = data['order_items']
         sellers = data['sellers']
         customers = data['customers']
 
-        # Since one zip code can map to multiple (lat, lng), take the first one
+        # Since one zip code can map to multiple (lat, lng), the first one is
+        # taken
         geo = data['geolocation']
         geo = geo.groupby('geolocation_zip_code_prefix',
                           as_index=False).first()
 
-        # Merge geo_location for sellers
+        # Geo_location is merged for sellers
         sellers_mask_columns = [
             'seller_id', 'seller_zip_code_prefix', 'geolocation_lat', 'geolocation_lng'
         ]
@@ -119,7 +121,7 @@ class Order:
             left_on='seller_zip_code_prefix',
             right_on='geolocation_zip_code_prefix')[sellers_mask_columns]
 
-        # Merge geo_location for customers
+        # Geo_location is merged for customers
         customers_mask_columns = ['customer_id', 'customer_zip_code_prefix', 'geolocation_lat', 'geolocation_lng']
 
         customers_geo = customers.merge(
@@ -128,7 +130,7 @@ class Order:
             left_on='customer_zip_code_prefix',
             right_on='geolocation_zip_code_prefix')[customers_mask_columns]
 
-        # Match customers with sellers in one table
+        # Customers are matched with sellers in one table
         customers_sellers = customers.merge(orders, on='customer_id')\
             .merge(order_items, on='order_id')\
             .merge(sellers, on='seller_id')\
@@ -140,7 +142,7 @@ class Order:
                    on='customer_id',
                    suffixes=('_seller',
                              '_customer'))
-        # Remove na()
+        # na() is removed
         matching_geo = matching_geo.dropna()
 
         matching_geo.loc[:, 'distance_seller_customer'] =\
@@ -150,8 +152,8 @@ class Order:
                                                   row['geolocation_lng_customer'],
                                                   row['geolocation_lat_customer']),
                                axis=1)
-        # Since an order can have multiple sellers,
-        # return the average of the distance per order
+        # Since an order can have multiple sellers, the average of the distance
+        # per order is returned
         order_distance =\
             matching_geo.groupby('order_id',
                                  as_index=False).agg({'distance_seller_customer':
@@ -163,13 +165,14 @@ class Order:
                           is_delivered=True,
                           with_distance_seller_customer=False):
         """
-        Returns a clean DataFrame (without NaN), with the all following columns:
+        This function returns a clean DataFrame (without NaN), with the all
+        following columns:
         ['order_id', 'wait_time', 'expected_wait_time', 'delay_vs_expected',
         'order_status', 'dim_is_five_star', 'dim_is_one_star', 'review_score',
         'number_of_products', 'number_of_sellers', 'price', 'freight_value',
         'distance_seller_customer']
         """
-        # Hint: make sure to re-use your instance methods defined above
+        # The instance methods defined above are reused
         df1 = self.get_wait_time()
         df2 = self.get_review_score()
         df3 = self.get_number_products()

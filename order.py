@@ -163,7 +163,7 @@ class Order:
 
     def get_training_data(self,
                           is_delivered=True,
-                          with_distance_seller_customer=False):
+                          with_distance_seller_customer=True):
         """
         This function returns a clean DataFrame (without NaN), with the all
         following columns:
@@ -183,8 +183,7 @@ class Order:
                   .merge(df4, on = "order_id").merge(df5, on = "order_id"))
 
         if with_distance_seller_customer:
-            all_df = all_df.merge(
-                self.get_distance_seller_customer(), on='order_id')
+            all_df = all_df.merge(df6, on='order_id')
 
         all_df.dropna(inplace = True)
         return all_df

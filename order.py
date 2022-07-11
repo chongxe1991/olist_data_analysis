@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from olist.utils import haversine_distance
-from olist.data import Olist
+from utils import haversine_distance
+from data import Olist
 
 
 class Order:
@@ -10,8 +10,10 @@ class Order:
     and various properties of these orders as columns
     '''
     def __init__(self):
+
         # An attribute ".data" is assigned to all new instances of Order
         self.data = Olist().get_data()
+
 
     def get_wait_time(self, is_delivered=True):
         """
@@ -19,6 +21,7 @@ class Order:
         [order_id, wait_time, expected_wait_time, delay_vs_expected, order_status]
         and filters out non-delivered orders unless specified
         """
+
         # Within this instance method, we have access to the instance of the
         # class Order in the variable self, as well as all its attributes
         orders = self.data['orders'].copy()
@@ -33,7 +36,6 @@ class Order:
         orders["expected_wait_time"] = orders["order_estimated_delivery_date"] - orders["order_purchase_timestamp"]
         orders["delay_vs_expected"] = orders["wait_time"] - orders["expected_wait_time"]
         orders = orders[["order_id", "wait_time", "expected_wait_time", "delay_vs_expected", "order_status"]]
-
         orders["wait_time"] = orders["wait_time"].dt.days
         orders["expected_wait_time"] = orders["expected_wait_time"].dt.days
         orders["delay_vs_expected"] = orders["delay_vs_expected"].dt.days
@@ -42,6 +44,7 @@ class Order:
         orders["delay_vs_expected"] = orders["delay_vs_expected"].apply(convert_numbers)
 
         return orders
+
 
     def get_review_score(self):
         """
@@ -54,7 +57,9 @@ class Order:
         reviews["dim_is_five_star"] = reviews["review_score"].apply(assign_5)
         reviews["dim_is_one_star"] = reviews["review_score"].apply(assign_1)
         reviews = reviews[["order_id", "dim_is_five_star", "dim_is_one_star", "review_score"]]
+
         return reviews
+
 
     def get_number_products(self):
         """
@@ -66,7 +71,9 @@ class Order:
         order_items2.rename(columns = {"order_item_id": "number_of_products"}, inplace = True)
         order_items2.reset_index(inplace = True)
         order_items2 = order_items2[["order_id", "number_of_products"]]
+
         return order_items2
+
 
     def get_number_sellers(self):
         """
@@ -78,7 +85,9 @@ class Order:
         order_items.reset_index(inplace = True)
         order_items.rename(columns = {"seller_id": "number_of_sellers"}, inplace = True)
         order_items = order_items[["order_id", "number_of_sellers"]]
+
         return order_items
+
 
     def get_price_and_freight(self):
         """
@@ -89,6 +98,7 @@ class Order:
         order_items = order_items.groupby("order_id").sum()
         order_items.reset_index(inplace = True)
         order_items = order_items[["order_id", "price", "freight_value"]]
+
         return order_items
 
 
@@ -97,6 +107,7 @@ class Order:
         This function returns a DataFrame with:
         order_id, distance_seller_customer
         """
+
         # Data is imported
         data = self.data
         orders = data['orders']
@@ -152,6 +163,7 @@ class Order:
                                                   row['geolocation_lng_customer'],
                                                   row['geolocation_lat_customer']),
                                axis=1)
+
         # Since an order can have multiple sellers, the average of the distance
         # per order is returned
         order_distance =\
@@ -160,6 +172,7 @@ class Order:
                                                       'mean'})
 
         return order_distance
+
 
     def get_training_data(self,
                           is_delivered=True,
@@ -172,6 +185,7 @@ class Order:
         'number_of_products', 'number_of_sellers', 'price', 'freight_value',
         'distance_seller_customer']
         """
+
         # The instance methods defined above are reused
         df1 = self.get_wait_time()
         df2 = self.get_review_score()
@@ -186,4 +200,5 @@ class Order:
             all_df = all_df.merge(df6, on='order_id')
 
         all_df.dropna(inplace = True)
+
         return all_df

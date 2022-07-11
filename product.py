@@ -1,16 +1,19 @@
 
 import pandas as pd
 import numpy as np
-from olist.data import Olist
-from olist.order import Order
+from data import Olist
+from order import Order
 
 
 class Product:
+
+
     def __init__(self):
         # Data is imported only once
         olist = Olist()
         self.data = olist.get_data()
         self.order = Order()
+
 
     def get_product_features(self):
         """
@@ -34,16 +37,20 @@ class Product:
 
         return df
 
+
     def get_price(self):
         """
         This function returns a DataFrame with:
         'product_id', 'price'
         """
         order_items = self.data['order_items']
+
         # There are many different order_items per product_id, each with
         # different prices. The mean of the various prices is taken
+
         return order_items[['product_id',
                             'price']].groupby('product_id').mean()
+
 
     def get_wait_time(self):
         """
@@ -56,6 +63,7 @@ class Product:
 
         return orders_products_with_time.groupby('product_id',
                           as_index=False).agg({'wait_time': 'mean'})
+
 
     def get_review_score(self):
         """
@@ -93,6 +101,7 @@ class Product:
 
         return df
 
+
     def get_quantity(self):
         """
         This function returns a DataFrame with:
@@ -111,6 +120,7 @@ class Product:
 
         return n_orders.merge(quantity, on='product_id')
 
+
     def get_sales(self):
         """
         This function returns a DataFrame with:
@@ -120,6 +130,7 @@ class Product:
             .groupby('product_id')\
             .sum()\
             .rename(columns={'price': 'sales'})
+
 
     def get_training_data(self):
         """
@@ -149,7 +160,9 @@ class Product:
         training_set['revenues'] = olist_sales_cut * training_set['sales']
         training_set['profits'] = training_set['revenues'] - training_set[
             'cost_of_reviews']
+
         return training_set
+
 
     def get_product_cat(self, agg="mean"):
         '''
@@ -166,4 +179,5 @@ class Product:
         agg_params['quantity'] = 'sum'
 
         product_cat = products.groupby("category").agg(agg_params)
+
         return product_cat

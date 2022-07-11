@@ -1,16 +1,20 @@
 
 import pandas as pd
 import numpy as np
-from olist.data import Olist
-from olist.order import Order
+from data import Olist
+from order import Order
 
 
 class Seller:
+
+
     def __init__(self):
+
         # The data is imported only once
         olist = Olist()
         self.data = olist.get_data()
         self.order = Order()
+
 
     def get_seller_features(self):
         """
@@ -18,23 +22,27 @@ class Seller:
         'seller_id', 'seller_city', 'seller_state'
         """
         sellers = self.data['sellers'].copy()
+
         # A copy is made before using inplace=True to avoid modifying
         #self.data
         sellers.drop('seller_zip_code_prefix', axis=1, inplace=True)
         sellers.drop_duplicates(
             inplace=True)
+
         # There can be multiple rows per seller
+
         return sellers
+
 
     def get_seller_delay_wait_time(self):
         """
         This function returns a DataFrame with:
         'seller_id', 'delay_to_carrier', 'wait_time'
         """
+
         # Data is extracted
         order_items = self.data['order_items'].copy()
         orders = self.data['orders'].query("order_status=='delivered'").copy()
-
         ship = order_items.merge(orders, on='order_id')
 
         # Datetime is handled
@@ -52,15 +60,18 @@ class Seller:
             days = np.mean(
                 (d.order_delivered_carrier_date - d.shipping_limit_date) /
                 np.timedelta64(24, 'h'))
+
             if days > 0:
                 return days
             else:
                 return 0
 
+
         def order_wait_time(d):
             days = np.mean(
                 (d.order_delivered_customer_date - d.order_purchase_timestamp)
                 / np.timedelta64(24, 'h'))
+
             return days
 
         delay = ship.groupby('seller_id')\
@@ -77,11 +88,13 @@ class Seller:
 
         return df
 
+
     def get_active_dates(self):
         """
         This function returns a DataFrame with:
         'seller_id', 'date_first_sale', 'date_last_sale', 'months_on_olist'
         """
+
         # Only orders that are approved are extracted
         orders_approved = self.data['orders'][[
             'order_id', 'order_approved_at'
@@ -107,7 +120,9 @@ class Seller:
         df['months_on_olist'] = round(
             (df['date_last_sale'] - df['date_first_sale']) /
             np.timedelta64(1, 'M'))
+
         return df
+
 
     def get_quantity(self):
         """
@@ -127,7 +142,9 @@ class Seller:
 
         result = n_orders.merge(quantity, on='seller_id')
         result['quantity_per_order'] = result['quantity'] / result['n_orders']
+
         return result
+
 
     def get_sales(self):
         """
@@ -138,6 +155,7 @@ class Seller:
             .groupby('seller_id')\
             .sum()\
             .rename(columns={'price': 'sales'})
+
 
     def get_review_score(self):
         """
@@ -169,14 +187,13 @@ class Seller:
             'cost_of_review':
             'sum'
         })
+
         df_grouped_by_sellers.columns = [
             'seller_id', 'share_of_one_stars', 'share_of_five_stars',
             'review_score', 'cost_of_reviews'
         ]
 
         return df_grouped_by_sellers
-
-
 
 
     def get_training_data(self):

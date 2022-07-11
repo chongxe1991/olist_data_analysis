@@ -8,7 +8,6 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
-math
 
 # tests/linter
 black
@@ -35,3 +34,6 @@ pandas-profiling
 #data visualisation
 matplotlib
 seaborn
+
+#translator
+google-trans-new

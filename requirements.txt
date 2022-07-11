@@ -36,4 +36,4 @@ matplotlib
 seaborn
 
 #translator
-google-trans-new
+translators==5.3.1

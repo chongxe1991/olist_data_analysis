@@ -37,3 +37,6 @@ seaborn
 
 #translator
 translators==5.3.1
+
+#statistics
+statsmodels

@@ -12,7 +12,7 @@ Several initial analysis were done on the dataset itself to inspect the data str
 
 #Conclusion
 
-Based on the analysis, three ways [https://github.com/chongxe1991/olist_data_analysis/blob/master/ceo_request.ipynb] are suggested to improve Olist's profit, based on different scenarios:
+Based on the analysis, [three ways] (https://github.com/chongxe1991/olist_data_analysis/blob/master/ceo_request.ipynb) are suggested to improve Olist's profit, based on different scenarios:
 
 1. **Removing all loss-bearing sellers from the platform altogether** - This will result in the removal of 1004 sellers, and if these sellers are not in Olist from the start, Olist could have improved its profits by approximately 66%.
 2. **Removing just enough loss-bearing sellers from the platform to achieve maximum profit** - This method is done by iterating over the profits achieved on every removal of one seller, as we also need to take IT costs into consideration (IT costs scale much slower by each increased order, so the number of orders brought in by sellers matter as well in this case). By this method, it is found that Olist only needs to remove 486 sellers to achieve max profits, and Olist would have improved its profits by approximately 120%, if these sellers were not present in the platform since the start.

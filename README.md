@@ -1,16 +1,16 @@
-#Introduction
+# Introduction
 
 Olist is a Brazilian ecommerce company. It connects merchants and their products to the main market places of Brazil. Olist Data Analysis aims to perform an analysis on Olist public dataset, and suggest some ways to improve the profits of the company.
 
-#Dataset
+# Dataset
 
 The dataset can be downloaded from Kaggle [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce). It includes several csv files which are related to Olist such as its order reviews, customers and order geolocations.
 
-#Analysis
+# Analysis
 
 Several initial analysis were done on the dataset itself to inspect the data structures and distribution. **Data wrangling and feature engineering** were done to transform the data into useful information, such as getting the revenue per seller and profit that the seller brings into Olist. As Olist is a Brazilian platform and the reviews were in Portuguese language, the reviews are also translated from Portuguese into English using an **API**. Simple **OLS models** were used to test and explain the relationship of various features with the rating of the order. Finally, some analysis was done on the sellers of the platform to **suggest ways to improve Olist's profits**, as some of the sellers bring losses to the company due to the cost of handling customer complaints and low ratings.
 
-#Conclusion
+# Conclusion
 
 Based on the analysis, [three ways](https://github.com/chongxe1991/olist_data_analysis/blob/master/ceo_request.ipynb) are suggested to improve Olist's profit, based on different scenarios:
 
